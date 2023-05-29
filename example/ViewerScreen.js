@@ -73,8 +73,8 @@ export default ViewScreen = ({navigation}) => {
         'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png');
   };
 
-  const path = '200mb';
-  // const path = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf";
+  // const path = '200mb';
+  const path = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf";
 
   const myToolbar = {
     [Config.CustomToolbarKey.Id]: 'myToolbar',
