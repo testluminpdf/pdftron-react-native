@@ -73,7 +73,10 @@ export default ViewScreen = ({navigation}) => {
         'https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png');
   };
 
-  const path = '200mb';
+  const path =
+    Platform.OS === 'android'
+      ? 'android.resource://com.example/raw/sample_200mb.pdf'
+      : '200mb';
   // const path = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf";
 
   const myToolbar = {
