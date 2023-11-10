@@ -71,6 +71,7 @@ import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.model.UserBookmarkItem;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
+import com.pdftron.pdf.tools.AnnotEditTextMarkup;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.tools.Eraser;
 import com.pdftron.pdf.tools.FreehandCreate;
@@ -148,6 +149,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
 
     private boolean mUseStylusAsPen = true;
     private boolean mSignWithStamps;
+
+    private boolean mEnableReadingModeQuickMenu = true;
 
     public boolean isBookmarkListVisible = true;
     public boolean isOutlineListVisible = true;
@@ -769,6 +772,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
     }
 
     // Hygen Generated Props
+    public void setEnableReadingModeQuickMenu(boolean enabled) {
+        mEnableReadingModeQuickMenu = enabled;
+    }
+
     public void setForceAppTheme(String forcedAppThemeItems) {
         if (THEME_DARK.equals(forcedAppThemeItems)) {
             PdfViewCtrlSettingsManager.setColorMode(getContext(), PdfViewCtrlSettingsManager.KEY_PREF_COLOR_MODE_NIGHT);
@@ -2501,7 +2508,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
 
             // remove unwanted items
             ToolManager.Tool currentTool = getToolManager() != null ? getToolManager().getTool() : null;
-            if (mAnnotMenuItems != null && !(currentTool instanceof Pan) && !(currentTool instanceof TextSelect)) {
+            boolean isPanOrTextSelect = (currentTool instanceof Pan || (currentTool instanceof TextSelect && !(currentTool instanceof AnnotEditTextMarkup)));
+            if (mAnnotMenuItems != null && !isPanOrTextSelect) {
                 List<QuickMenuItem> removeList = new ArrayList<>();
                 checkQuickMenu(quickMenu.getFirstRowMenuItems(), mAnnotMenuItems, removeList);
                 checkQuickMenu(quickMenu.getSecondRowMenuItems(), mAnnotMenuItems, removeList);
@@ -2512,7 +2520,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
                     quickMenu.setDividerVisibility(View.GONE);
                 }
             }
-            if (mLongPressMenuItems != null && (currentTool instanceof Pan || currentTool instanceof TextSelect)) {
+            if (mLongPressMenuItems != null && isPanOrTextSelect) {
                 List<QuickMenuItem> removeList = new ArrayList<>();
                 checkQuickMenu(quickMenu.getFirstRowMenuItems(), mLongPressMenuItems, removeList);
                 checkQuickMenu(quickMenu.getSecondRowMenuItems(), mLongPressMenuItems, removeList);
@@ -2830,6 +2838,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
         }
 
         @Override
+        public void onPagesMoved(List<Integer> pagesMoved, int to, int currentPage) {
+
+        }
+
+        @Override
         public void onPageLabelsChanged() {
 
         }
@@ -3091,6 +3104,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 {
 
         getToolManager().setStylusAsPen(mUseStylusAsPen);
         getToolManager().setSignSignatureFieldsWithStamps(mSignWithStamps);
+        getToolManager().setReflowTextSelectionMenuEnabled(mEnableReadingModeQuickMenu);
 
         getToolManager().getUndoRedoManger().addUndoRedoStateChangeListener(mUndoRedoStateChangedListener);
 
